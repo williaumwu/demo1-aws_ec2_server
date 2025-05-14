@@ -1,0 +1,5 @@
+assets:
+   execgroups:
+     - name: ec2_server
+       app_name: terraform
+       folder: terraform
