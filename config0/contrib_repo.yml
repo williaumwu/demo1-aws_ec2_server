@@ -3,3 +3,6 @@ assets:
      - name: ec2_server
        app_name: terraform
        folder: terraform
+   stacks:
+     - name: aws_ec2_server
+       folder: stacks

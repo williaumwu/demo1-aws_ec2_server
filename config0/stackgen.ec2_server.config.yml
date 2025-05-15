@@ -1,0 +1,7 @@
+tf_variables_file: terraform/variables.tf
+execgroup: williaumwu:::demo1-aws_ec2_server::ec2_server
+resource_type: server
+timeout: 600
+tf_runtime: tofu:1.9.1
+dest_dir: stacks
+stack_name: aws_ec2_server
