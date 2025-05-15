@@ -26,55 +26,55 @@ def run(stackargs):
                                  types="str")
     
     stack.parse.add_optional(key="associate_public_ip_address",
-                                 default=True,
-                                 tags="tfvar,db",
-                                 types="bool")
+                             default=True,
+                             tags="tfvar,db",
+                             types="bool")
     
     stack.parse.add_optional(key="instance_type",
-                                 default="t3.micro",
-                                 tags="tfvar,db",
-                                 types="str")
+                             default="t3.micro",
+                             tags="tfvar,db",
+                             types="str")
     
     stack.parse.add_optional(key="disktype",
-                                 default="gp2",
-                                 tags="tfvar,db",
-                                 types="str")
+                             default="gp2",
+                             tags="tfvar,db",
+                             types="str")
     
     stack.parse.add_optional(key="disksize",
-                                 default="20",
-                                 tags="tfvar,db",
-                                 types="str")
+                             default="20",
+                             tags="tfvar,db",
+                             types="str")
     
-    stack.parse.add_required(key="user_data",
-                                 tags="tfvar,db",
-                                 types="str")
+    stack.parse.add_optional(key="user_data",
+                             tags="tfvar,db",
+                             types="str")
     
     stack.parse.add_optional(key="ami_filter",
-                                 default="ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*",
-                                 tags="tfvar,db",
-                                 types="str")
+                             default="ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*",
+                             tags="tfvar,db",
+                             types="str")
     
     stack.parse.add_optional(key="ami_owner",
-                                 default="099720109477",
-                                 tags="tfvar,db",
-                                 types="str")
+                             default="099720109477",
+                             tags="tfvar,db",
+                             types="str")
     
-    stack.parse.add_required(key="iam_instance_profile",
-                                 tags="tfvar,db",
-                                 types="str")
+    stack.parse.add_optional(key="iam_instance_profile",
+                             tags="tfvar,db",
+                             types="str")
     
-    stack.parse.add_required(key="subnet_id",
-                                 tags="tfvar,db",
-                                 types="str")
+    stack.parse.add_optional(key="subnet_id",
+                             tags="tfvar,db",
+                             types="str")
     
-    stack.parse.add_required(key="security_group_ids",
-                                 tags="tfvar,db",
-                                 types="str")
+    stack.parse.add_optional(key="security_group_ids",
+                             tags="tfvar,db",
+                             types="str")
     
     stack.parse.add_optional(key="cloud_tags",
-                                 default={},
-                                 tags="tfvar,db",
-                                 types="dict")
+                             default={},
+                             tags="tfvar,db",
+                             types="dict")
     
     # Add execgroup
     stack.add_execgroup("williaumwu:::demo1-aws_ec2_server::ec2_server",

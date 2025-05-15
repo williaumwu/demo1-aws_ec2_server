@@ -1,0 +1,18 @@
+global:
+  arguments: 
+    aws_default_region: us-east-2
+  metadata:   
+    labels:
+       demo: 
+         environment: demo
+         purpose: test
+         cloud: aws
+infrastructure:
+   ec2_server:
+       stack_name: williaumwu:::aws_ec2_server
+       arguments:
+          ssh_key_name: config0-demo
+          hostname: config0-demo-jenkins
+       metadata:
+          labels:
+            - demo
