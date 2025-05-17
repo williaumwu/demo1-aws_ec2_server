@@ -8,22 +8,22 @@ def run(stackargs):
 
     # Add default variables
     stack.parse.add_required(key="hostname",
-                                 tags="tfvar,db",
-                                 types="str")
+                             tags="tfvar,db",
+                             types="str")
     
     stack.parse.add_required(key="ssh_key_name",
-                                 tags="tfvar,db",
-                                 types="str")
+                             tags="tfvar,db",
+                             types="str")
     
     stack.parse.add_optional(key="aws_default_region",
-                                 default="us-east-1",
-                                 tags="tfvar,db,resource,tf_exec_env",
-                                 types="str")
+                             default="us-east-1",
+                             tags="tfvar,db,resource,tf_exec_env",
+                             types="str")
     
     stack.parse.add_optional(key="ami",
-                                 default="ami-055750c183ca68c38",
-                                 tags="tfvar,db",
-                                 types="str")
+                             default="ami-055750c183ca68c38",
+                             tags="tfvar,db",
+                             types="str")
     
     stack.parse.add_optional(key="associate_public_ip_address",
                              default=True,
