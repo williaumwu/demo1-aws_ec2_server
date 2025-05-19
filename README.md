@@ -1,9 +1,79 @@
 # Integrating Terraform Code with Config0
 
 ## Overview
-This guide explains how to integrate your existing Terraform code into Config0 to create end-to-end developer solutions with single entry points. This includes:
+This guide explains how to integrate your existing Terraform code into Config0 to create end-to-end developer solutions with single entry points, including:
 - Terraform to Terraform connections
 - Terraform to Ansible connections
+
+## Process Diagram
+```
+┌───────────────────────────────────────────────────────────────────┐
+│                                                                   │
+│  Existing Terraform Code                                          │
+│  └── terraform/                                                   │
+│      ├── main.tf                                                  │
+│      ├── variables.tf                                             │
+│      └── ...                                                      │
+│                                                                   │
+├───────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  Step 1: Download Stack Generation Tool                           │
+│  $ curl ... > /tmp/stack_gen                                      │
+│                                                                   │
+├───────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  Step 2: Create Configuration File                                │
+│  $ cat > /tmp/stackgen-ec2-server.yml                             │
+│                                                                   │
+├───────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  Step 3: Generate Stack                                           │
+│  $ /tmp/stack_gen -c /tmp/stackgen-ec2-server.yml                 │
+│                   │                                               │
+│                   ▼                                               │
+│  ┌─────────────────────────────────┐                              │
+│  │  Generated Stack                │                              │
+│  │  └── stacks/                    │                              │
+│  │      └── aws_ec2_server/        │                              │
+│  │          ├── _main/             │                              │
+│  │          │   ├── run.py         │                              │
+│  │          │   └── ...            │                              │
+│  │          └── ...                │                              │
+│  └─────────────────────────────────┘                              │
+│                                                                   │
+├───────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  Step 4: Update Resource Name                                     │
+│  $ sed -i 's/FIX ME/stack.hostname/g' stacks/.../run.py           │
+│                                                                   │
+├───────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  Step 5: Create Config0 Mapping File                              │
+│  $ mkdir -p config0                                               │
+│  $ cat > config0/contrib_repo.yml                                 │
+│                                                                   │
+│  ┌──────────────────────────────────────────────────────┐         │
+│  │  Config0 Repository Structure                        │         │
+│  │  ├── terraform/                                      │         │
+│  │  │   ├── main.tf                                     │         │
+│  │  │   ├── variables.tf                                │         │
+│  │  │   └── ...                                         │         │
+│  │  ├── stacks/                                         │         │
+│  │  │   └── aws_ec2_server/                             │         │
+│  │  │       ├── _main/                                  │         │
+│  │  │       └── ...                                     │         │
+│  │  └── config0/                                        │         │
+│  │      └── contrib_repo.yml                            │         │
+│  └──────────────────────────────────────────────────────┘         │
+│                                                                   │
+├───────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  Step 6: Complete Integration                                     │
+│  - Commit code                                                    │
+│  - Config0 evaluates and registers resources                      │
+│                                                                   │
+└───────────────────────────────────────────────────────────────────┘
+```
 
 ## Getting Started
 We'll begin by assuming you have existing Terraform code in place.
@@ -11,8 +81,6 @@ We'll begin by assuming you have existing Terraform code in place.
 ### Existing Resources
 - **Repositories**:
   - Terraform repository "demo1-aws_ec2_server" for EC2 server creation
-  - Terraform repository "demo1-aws_ssh_keys" for SSH key generation and upload
-  - Ansible playbook "demo1-jenkins" for Jenkins installation
 
 ## Example: Integrating demo1-aws_ec2_server
 
