@@ -10,13 +10,13 @@ We'll begin by assuming you have existing Terraform code in place.
 
 ### Existing Resources
 - **Repositories**:
-  - Terraform repository "demo1-aws_ssh_keys" for SSH key generation and upload
   - Terraform repository "demo1-aws_ec2_server" for EC2 server creation
+  - Terraform repository "demo1-aws_ssh_keys" for SSH key generation and upload
   - Ansible playbook "demo1-jenkins" for Jenkins installation
 
 ## Example: Integrating demo1-aws_ec2_server
 
-If you have simple Terraform code in the "terraform" folder, follow these steps to create a stack:
+We have simple Terraform code in the "terraform" folder, follow these steps to create a stack:
 
 ### 1. Download Config0's Helper Stack Generation Script
 ```bash
@@ -25,7 +25,15 @@ chmod 755 /tmp/stack_gen
 ```
 
 ### 2. Create Configuration File
-The easiest approach is to create a config.yml file using a heredoc:
+The easiest approach is to create a config.yml file with these parameters:
+
+- **tf_variables_file**: Location of the terraform variables file
+- **execgroup**: A group of files to be executed together (in this case, terraform files). We'll reference this later in `config0/contrib_repo.yml`
+- **resource_type**: The user provides the resource_type to summarize the output of the execgroup. In this case, "server" is the only output of this execgroup of Terraform code.
+- **timeout**: Maximum execution time in seconds (10 minutes is usually sufficient for server creation)
+- **tf_runtime**: The terraform runtime format `<terraform/tofu>:<version>`
+- **dest_dir**: Destination directory for the generated Config0 stack
+- **stack_name**: Name of the Config0 stack
 
 ```bash
 cat > /tmp/stackgen-ec2-server.yml << 'EOF'
@@ -39,30 +47,17 @@ stack_name: aws_ec2_server
 EOF
 ```
 
-### 3. Create the stack
-
-```bash
-/tmp/stack_gen -c /tmp/stackgen-ec2-server.yml 
-```
-
 ### 4. Replace "FIX ME" with stack.hostname 
+
+The resource name should be dynamically referenced within the stack. In this case, we will use the hostname as the resource name.
 
 ```bash
 sed -i 's/FIX ME/stack.hostname/g' stacks/aws_ec2_server/_main/run.py
 ```
 
-### 5. Create contrib_repo.yml in config0 folder
+### 5. Create contrib_repo.yml
 
-This is the quickest way to get started, although there is an implicit approach that will be presented later.
-
-We'll first provide an explicit configuration with config0/contrib_repo.yml:
-- For execgroup (execution group which is a group of files like Terraform that are executed together):
-  - "ec2_server" is the name of the execgroup
-  - "terraform" is the application name (other examples include ansible, pulumi, cloudformation)
-  - "terraform" is the folder where the Terraform files are located
-- For stack (entry point for this Terraform code):
-  - "aws_ec2_server" is the name of this stack
-  - "stacks" is where the stack files are found
+Create the configuration file that maps your existing code to Config0:
 
 ```bash
 mkdir -p config0
@@ -78,6 +73,8 @@ assets:
       folder: stacks
 EOF
 ```
+
+This explicit approach is the quickest way to get started to import the Terraform code as a Config0 execgroup and the Config0 stack that refers to this Terraform code. The implicit approach is the easiest way to manage and scale the imports moving forward.
 
 After completing these steps:
 1. Check in your code and have Config0 evaluate this repository for additions/changes
