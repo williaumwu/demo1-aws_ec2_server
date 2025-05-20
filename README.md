@@ -7,72 +7,39 @@ This guide explains how to integrate your existing Terraform code into Config0 t
 
 ## Process Diagram
 ```
-┌───────────────────────────────────────────────────────────────────┐
-│                                                                   │
-│  Existing Terraform Code                                          │
-│  └── terraform/                                                   │
-│      ├── main.tf                                                  │
-│      ├── variables.tf                                             │
-│      └── ...                                                      │
-│                                                                   │
-├───────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  Step 1: Download Stack Generation Tool                           │
-│  $ curl ... > /tmp/stack_gen                                      │
-│                                                                   │
-├───────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  Step 2: Create Configuration File                                │
-│  $ cat > /tmp/stackgen-ec2-server.yml                             │
-│                                                                   │
-├───────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  Step 3: Generate Stack                                           │
-│  $ /tmp/stack_gen -c /tmp/stackgen-ec2-server.yml                 │
-│                   │                                               │
-│                   ▼                                               │
-│  ┌─────────────────────────────────┐                              │
-│  │  Generated Stack                │                              │
-│  │  └── stacks/                    │                              │
-│  │      └── aws_ec2_server/        │                              │
-│  │          ├── _main/             │                              │
-│  │          │   ├── run.py         │                              │
-│  │          │   └── ...            │                              │
-│  │          └── ...                │                              │
-│  └─────────────────────────────────┘                              │
-│                                                                   │
-├───────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  Step 4: Update Resource Name                                     │
-│  $ sed -i 's/FIX ME/stack.hostname/g' stacks/.../run.py           │
-│                                                                   │
-├───────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  Step 5: Create Config0 Mapping File                              │
-│  $ mkdir -p config0                                               │
-│  $ cat > config0/contrib_repo.yml                                 │
-│                                                                   │
-│  ┌──────────────────────────────────────────────────────┐         │
-│  │  Config0 Repository Structure                        │         │
-│  │  ├── terraform/                                      │         │
-│  │  │   ├── main.tf                                     │         │
-│  │  │   ├── variables.tf                                │         │
-│  │  │   └── ...                                         │         │
-│  │  ├── stacks/                                         │         │
-│  │  │   └── aws_ec2_server/                             │         │
-│  │  │       ├── _main/                                  │         │
-│  │  │       └── ...                                     │         │
-│  │  └── config0/                                        │         │
-│  │      └── contrib_repo.yml                            │         │
-│  └──────────────────────────────────────────────────────┘         │
-│                                                                   │
-├───────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  Step 6: Complete Integration                                     │
-│  - Commit code                                                    │
-│  - Config0 evaluates and registers resources                      │
-│                                                                   │
-└───────────────────────────────────────────────────────────────────┘
++-------------------+
+| terraform/        |
+| data.tf           |
+| main.tf           |
+| outputs.tf        |
+| variables.tf      |
+| provider.tf       |
++-------------------+
+            ]
+            | terraform code
+            | imported as
+            v
++--------------------------------------+
+| williaumwu:::demo1-aws_ec2_server::  |
+| ec2_server                           |
+| (execgroup)                          |
++--------------------------------------+
+            |                 |
+            |                 | 
+            v                 |
++-------------------------+   |
+| /tmp/stackgen-          |   | execgroup
+| ec2-server.yml          |   | used by
++-------------------------+   |
+            |                 |
+            | stack_gen       |
+            | creates         |
+            |                 |
+            v                 v
++--------------------------------------------+
+| williaumwu:::aws_ec2_server                |
+| (stack)                                    |
++--------------------------------------------+
 ```
 
 ## Getting Started
