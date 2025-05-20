@@ -1,53 +1,52 @@
 # Integrating Terraform Code with Config0
 
 ## Overview
-This guide explains how to integrate your existing Terraform code into Config0 to create end-to-end developer solutions with single entry points, including:
-- Terraform to Terraform connections
-- Terraform to Ansible connections
+This guide explains how to integrate your existing Terraform code into Config0.  
+This Terraform code and its execution then become:
+   - Immutable
+   - Portable
+   - Easily reusable by other upstream Terraform and DevOps code
+      - Terraform to Terraform connections
+      - Terraform to Ansible connections
 
 ## Process Diagram
 ```
-+-------------------+
-| terraform/        |
-| data.tf           |
-| main.tf           |
-| outputs.tf        |
-| variables.tf      |
-| provider.tf       |
-+-------------------+
++----------------------+
+| terraform/           |
+|      data.tf         |
+|      main.tf         |
+|      outputs.tf      |
+|      variables.tf    |
+|      provider.tf     |
++----------------------+
             ]
             | terraform code
-            | imported as
+            | imported as Config0 execgroup
             v
-+--------------------------------------+
-| williaumwu:::demo1-aws_ec2_server::  |
-| ec2_server                           |
-| (execgroup)                          |
-+--------------------------------------+
-            |                 |
-            |                 | 
-            v                 |
-+-------------------------+   |
-| /tmp/stackgen-          |   | execgroup
-| ec2-server.yml          |   | used by
-+-------------------------+   |
-            |                 |
-            | stack_gen       |
-            | creates         |
-            |                 |
-            v                 v
-+--------------------------------------------+
-| williaumwu:::aws_ec2_server                |
-| (stack)                                    |
-+--------------------------------------------+
++-----------------------------------------------------------+
+| williaumwu:::demo1-aws_ec2_server::ec2_server (execgroup) |
++-----------------------------------------------------------+
+            |                         |
+            |                         | 
+            v                         |
++---------------------------------+   |
+| /tmp/stackgen-ec2-server.yml    |   | execgroup
++---------------------------------+   | used by stack
+            |                         |
+            | stack_gen               |
+            | creates                 |
+            | Config0 stack           |
+            v                         v
++----------------------------------------+
+| williaumwu:::aws_ec2_server (stack)    |
++----------------------------------------+
 ```
 
 ## Getting Started
-We'll begin by assuming you have existing Terraform code in place.
+We'll begin by assuming users have existing Terraform code in place.
 
 ### Existing Resources
-- **Repositories**:
-  - Terraform repository "demo1-aws_ec2_server" for EC2 server creation
+Terraform repository `demo1-aws_ec2_server` (this repository) for EC2 server creation
 
 ## Example: Integrating demo1-aws_ec2_server
 
@@ -111,9 +110,5 @@ EOF
 
 This explicit approach is the quickest way to get started to import the Terraform code as a Config0 execgroup and the Config0 stack that refers to this Terraform code. The implicit approach is the easiest way to manage and scale the imports moving forward.
 
-After completing these steps:
-1. Check in your code and have Config0 evaluate this repository for additions/changes
-2. This Terraform code and its execution now becomes:
-   - Immutable
-   - Portable
-   - Easily reusable by other upstream Terraform and DevOps code
+After completing these steps, check in your code and have Config0 evaluate this repository for additions/changes.
+It will find a new execgroup and a new stack.
